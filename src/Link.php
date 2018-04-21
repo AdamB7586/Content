@@ -17,12 +17,13 @@ class Link {
      * @param Database $db
      * @param int|false $siteID
      */
-    public function __construct(Database $db, $siteID = false) {
+    public function __construct(Database $db, $imageFolder = '/images/links', $siteID = false) {
         $this->db = $db;
         if(is_numeric($siteID)) {
             $this->siteID = intval($siteID);
         }
         $this->image = new ImageUpload();
+        $this->setImageFolder($imageFolder);
     }
     
     /**
@@ -56,25 +57,44 @@ class Link {
     }
     
     /**
-     * 
-     * @param array $linkInfo
-     * @param array $image
+     * Returns a list of all of the relevant links
+     * @return array|false
+     */
+    public function listLinks(){
+        if($this->getSiteID() !== false){$where['site_id'] = $this->getSiteID();}
+        return $this->db->select($this->getLinkTable(), $where);
+    }
+    
+    /**
+     * Add a link to the database
+     * @param array $linkInfo This should be the link information that you are adding
+     * @param array $image If you would like to upload an image file include the $_FILES information here
      * @return boolean If successfully added will return true else returns false
      */
     public function addLink($linkInfo, $image = NULL) {
-        return $this->db->insert($this->getLinkTable(), $linkInfo);
+        $imageInfo = [];
+        if(is_array($image)){$imageupload = $this->image->uploadImage($image);}
+        if($imageupload === true){
+            
+        }
+        return $this->db->insert($this->getLinkTable(), array_merge($linkInfo, $imageInfo));
     }
     
     /**
      * Edit a link and its information
-     * @param int $linkID
-     * @param array $linkInfo
-     * @param array $image
+     * @param int $linkID This should be the unique link id in the database 
+     * @param array $linkInfo This should be the link information that you are editing
+     * @param array $image If you would like to upload an image file include the $_FILES information here
      * @return boolean If successfully updated will return true else returns false
      */
     public function editLink($linkID, $linkInfo, $image = NULL) {
         if(is_numeric($linkID) && is_array($linkInfo)){
-            return $this->db->update($this->getLinkTable(), $linkInfo, array('id' => $linkID));
+            $imageInfo = [];
+            if(is_array($image)){$imageupload = $this->image->uploadImage($image);}
+            if($imageupload === true){
+
+            }
+            return $this->db->update($this->getLinkTable(), array_merge($linkInfo, $imageInfo), array('id' => $linkID));
         }
         return false;
     }
