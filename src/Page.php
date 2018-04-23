@@ -9,7 +9,7 @@ use Content\Utilities\PageUtil;
 class Page {
     protected $db;
     protected $htmlParser;
-    protected $siteID;
+    public $siteID;
     
     protected $content_table = 'pages';
 
@@ -42,7 +42,7 @@ class Page {
      * @return $this
      */
     public function setContentTable($table){
-        if(!empty(trim($table))){
+        if(is_string($table) && !empty(trim($table))){
             $this->content_table = trim($table);
         }
         return $this;
