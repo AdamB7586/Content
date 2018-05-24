@@ -96,7 +96,7 @@ class Link {
         $where = [];
         if($active === true){$where['active'] = 1;}
         if($this->getSiteID() !== false){$where['site_id'] = $this->getSiteID();}
-        return $this->db->select($this->getLinkTable(), $where);
+        return $this->db->selectAll($this->getLinkTable(), $where);
     }
     
     /**
