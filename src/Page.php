@@ -3,49 +3,28 @@
 namespace Content;
 
 use DBAL\Database;
-use Sunra\PhpSimple\HtmlDomParser;
+use Configuration\Config;
 use Content\Utilities\PageUtil;
 
 class Page {
     protected $db;
+    protected $config;
     protected $htmlParser;
-    public $siteID;
     
-    protected $content_table = 'pages';
+    public $siteID;
 
     /**
      * 
      * @param Database $db
      * @param int $siteID
      */
-    public function __construct(Database $db, $siteID = false) {
+    public function __construct(Database $db, Config $config, $siteID = false) {
         $this->db = $db;
+        $this->config = $config;
         $this->htmlParser = new HtmlDomParser();
         if(is_numeric($siteID)){
             $this->setSiteID($siteID);
         }
-    }
-    
-    /**
-     * Gets the content database name variable
-     * @return string|boolean  If content table value is set the value will be returned else will return false
-     */
-    public function getContentTable(){
-        if(!empty($this->content_table)){
-            return $this->content_table;
-        }
-    }
-    
-    /**
-     * Sets the content database name variable
-     * @param string $table This should be the table name of the contents table
-     * @return $this
-     */
-    public function setContentTable($table){
-        if(is_string($table) && !empty(trim($table))){
-            $this->content_table = trim($table);
-        }
-        return $this;
     }
     
     /**
@@ -82,7 +61,7 @@ class Page {
         $where['url'] = $pageURI;
         if($onlyActive == true){$where['active'] = 1;}
         if($this->getSiteID() !== false){$where['site_id'] = $this->getSiteID();}
-        return $this->db->select($this->getContentTable(), $where);
+        return $this->db->select($this->config->content_table, $where);
     }
     
     /**
@@ -92,7 +71,7 @@ class Page {
      */
     public function addPage($content){
         if(is_array($content) && $this->checkIfURLExists($content['url']) === 0){
-            return $this->db->insert($this->getContentTable(), array_merge(($this->getSiteID() !== false ? array('site_id' => $this->getSiteID()) : array()), array('title' => $content['title'], 'content' => $content['content'], 'description' => $content['description'], 'url' => PageUtil::cleanURL($content['url']))));
+            return $this->db->insert($this->config->content_table, array_merge(($this->getSiteID() !== false ? array('site_id' => $this->getSiteID()) : array()), array('title' => $content['title'], 'content' => $content['content'], 'description' => $content['description'], 'url' => PageUtil::cleanURL($content['url']))));
         }
     }
     
@@ -104,7 +83,7 @@ class Page {
      */
     public function updatePage($pageID, $content = []){
         if(is_numeric($pageID) && is_array($content)){
-            return $this->db->update($this->getContentTable(), array('title' => $content['title'], 'content' => $content['content'], 'description' => $content['description'], 'url' => PageUtil::cleanURL($content['url'])), array_merge(($this->getSiteID() !== false ? array('site_id' => $this->getSiteID()) : array()), array('id' => $pageID)), 1);
+            return $this->db->update($this->config->content_table, array('title' => $content['title'], 'content' => $content['content'], 'description' => $content['description'], 'url' => PageUtil::cleanURL($content['url'])), array_merge(($this->getSiteID() !== false ? array('site_id' => $this->getSiteID()) : array()), array('id' => $pageID)), 1);
         }
         return false;
     }
@@ -116,7 +95,7 @@ class Page {
      */
     public function disablePage($pageID){
         if(is_numeric($pageID)){
-            return $this->db->update($this->getContentTable(), array('active' => 0), array_merge(($this->getSiteID() !== false ? array('site_id' => $this->getSiteID()) : array()), array('id' => intval($pageID))), 1);
+            return $this->db->update($this->config->content_table, array('active' => 0), array_merge(($this->getSiteID() !== false ? array('site_id' => $this->getSiteID()) : array()), array('id' => intval($pageID))), 1);
         }
         return false;
     }
@@ -128,7 +107,7 @@ class Page {
      */
     public function deletePage($pageID){
         if(is_numeric($pageID)){
-            return $this->db->delete($this->getContentTable(), array_merge(($this->getSiteID() !== false ? array('site_id' => $this->getSiteID()) : array()), array('id' => intval($pageID))), 1);
+            return $this->db->delete($this->config->content_table, array_merge(($this->getSiteID() !== false ? array('site_id' => $this->getSiteID()) : array()), array('id' => intval($pageID))), 1);
         }
         return false;
     }
@@ -139,7 +118,7 @@ class Page {
      * @return array|false If any information exists they will be returned as an array else will return false
      */
     public function searchPages($search){
-        return $this->db->query("SELECT `title`, `content`, `url`, MATCH(`title`, `content`) AGAINST(:search) AS `score` FROM `{$this->getContentTable()}` WHERE `site_id` = :siteid AND MATCH(`title`,`content`) AGAINST(:search IN BOOLEAN MODE)", array(':siteid' => $this->siteID, ':search' => $search));
+        return $this->db->query("SELECT `title`, `content`, `url`, MATCH(`title`, `content`) AGAINST(:search) AS `score` FROM `{$this->config->content_table}` WHERE `site_id` = :siteid AND MATCH(`title`,`content`) AGAINST(:search IN BOOLEAN MODE)", array(':siteid' => $this->siteID, ':search' => $search));
     }
     
     /**
@@ -148,6 +127,6 @@ class Page {
      * @return int Will return the number of matching URLs (1 if exists and 0 if it doesn't)
      */
     protected function checkIfURLExists($url){
-        return $this->db->count($this->getContentTable(), array_merge(($this->getSiteID() !== false ? array('site_id' => $this->getSiteID()) : array()), array('url' => PageUtil::cleanURL($url))));
+        return $this->db->count($this->config->content_table, array_merge(($this->getSiteID() !== false ? array('site_id' => $this->getSiteID()) : array()), array('url' => PageUtil::cleanURL($url))));
     }
 }

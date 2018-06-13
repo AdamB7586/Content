@@ -3,47 +3,29 @@
 namespace Content;
 
 use DBAL\Database;
+use Configuration\Config;
 use ImgUpload\ImageUpload;
 
 class Link {
     protected $db;
+    protected $config;
     protected $image;
-    public $siteID;
     
-    protected $link_table = 'links';
+    public $siteID;
 
     /**
      * Constructor
      * @param Database $db
      * @param int|false $siteID
      */
-    public function __construct(Database $db, $imageFolder = '/images/links', $siteID = false) {
+    public function __construct(Database $db, Config $config, $imageFolder = '/images/links', $siteID = false) {
         $this->db = $db;
+        $this->config = $config;
         if(is_numeric($siteID)) {
             $this->siteID = intval($siteID);
         }
         $this->image = new ImageUpload();
         $this->setImageFolder($imageFolder);
-    }
-    
-    /**
-     * Sets the table name where the links will be stored
-     * @param string $table This should be the table where you want the links to be stored
-     * @return $this
-     */
-    public function setLinkTable($table){
-        if(is_string($table) && !empty(trim($table))){
-            $this->link_table = trim($table);
-        }
-        return $this;
-    }
-    
-    /**
-     * Return the link table string
-     * @return string
-     */
-    public function getLinkTable(){
-        return $this->link_table;
     }
     
     /**
@@ -96,7 +78,7 @@ class Link {
         $where = [];
         if($active === true){$where['active'] = 1;}
         if($this->getSiteID() !== false){$where['site_id'] = $this->getSiteID();}
-        return $this->db->selectAll($this->getLinkTable(), $where);
+        return $this->db->selectAll($this->config->links_table, $where);
     }
     
     /**
@@ -107,7 +89,7 @@ class Link {
     public function getLinkInfo($linkID) {
         if(is_numeric($linkID)){
             if($this->getSiteID() !== false){$where['site_id'] = $this->getSiteID();}
-            return $this->db->select($this->getLinkTable(), array_merge($where, array('id' => $linkID)));
+            return $this->db->select($this->config->links_table, array_merge($where, array('id' => $linkID)));
         }
         return false;
     }
@@ -127,7 +109,7 @@ class Link {
             $imageInfo = array('image' => $image['name'], 'image_width' => $width, 'image_height' => $height);
         }
         if($this->getSiteID() !== false){$linkInfo['site_id'] = $this->getSiteID();}
-        return $this->db->insert($this->getLinkTable(), array_merge($linkInfo, $imageInfo));
+        return $this->db->insert($this->config->links_table, array_merge($linkInfo, $imageInfo));
     }
     
     /**
@@ -147,7 +129,7 @@ class Link {
                 $imageInfo = array('image' => $image['name'], 'image_width' => $width, 'image_height' => $height);
             }
             if($this->getSiteID() !== false){$where['site_id'] = $this->getSiteID();}else{$where = [];}
-            return $this->db->update($this->getLinkTable(), array_merge($linkInfo, $imageInfo), array_merge($where, array('id' => $linkID)));
+            return $this->db->update($this->config->links_table, array_merge($linkInfo, $imageInfo), array_merge($where, array('id' => $linkID)));
         }
         return false;
     }
@@ -160,7 +142,7 @@ class Link {
     public function deleteLink($linkID) {
         if(is_numeric($linkID)){
             if($this->getSiteID() !== false){$where['site_id'] = $this->getSiteID();}else{$where = [];}
-            return $this->db->delete($this->getLinkTable(), array_merge($where, array('id' => $linkID)));
+            return $this->db->delete($this->config->links_table, array_merge($where, array('id' => $linkID)));
         }
         return false;
     }
@@ -174,7 +156,7 @@ class Link {
     public function disableLink($linkID, $status = 0) {
         if(is_numeric($linkID) && is_numeric($status)){
             if($this->getSiteID() !== false){$where['site_id'] = $this->getSiteID();}else{$where = [];}
-            return $this->db->update($this->getLinkTable(), array('active' => $status), array_merge($where, array('id' => $linkID)));
+            return $this->db->update($this->config->links_table, array('active' => $status), array_merge($where, array('id' => $linkID)));
         }
         return false;
     }
