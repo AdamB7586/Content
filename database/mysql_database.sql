@@ -16,10 +16,11 @@ DROP TABLE IF EXISTS `pages`;
 CREATE TABLE IF NOT EXISTS `pages` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `site_id` int(10) UNSIGNED,
-  `url` varchar(150) NOT NULL,
+  `uri` varchar(150) NOT NULL,
   `title` varchar(150) NOT NULL,
   `content` text NOT NULL,
   `description` varchar(200) NOT NULL,
+  `additional` TEXT NULL DEFAULT NULL,
   `active` tinyint(3) UNSIGNED NOT NULL DEFAULT '1',
   `required` tinyint(3) UNSIGNED NOT NULL DEFAULT '0',
   `last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

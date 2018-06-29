@@ -58,7 +58,7 @@ class Page {
      */
     public function getPage($pageURI, $onlyActive = true){
         $where = array();
-        $where['url'] = $pageURI;
+        $where['uri'] = $pageURI;
         if($onlyActive == true){$where['active'] = 1;}
         if($this->getSiteID() !== false){$where['site_id'] = $this->getSiteID();}
         return $this->db->select($this->config->content_table, $where);
@@ -70,8 +70,8 @@ class Page {
      * @return boolean Returns true on success and false on failure
      */
     public function addPage($content){
-        if(is_array($content) && $this->checkIfURLExists($content['url']) === 0){
-            return $this->db->insert($this->config->content_table, array_merge(($this->getSiteID() !== false ? array('site_id' => $this->getSiteID()) : array()), array('title' => $content['title'], 'content' => $content['content'], 'description' => $content['description'], 'url' => PageUtil::cleanURL($content['url']))));
+        if(is_array($content) && $this->checkIfURLExists($content['uri']) === 0){
+            return $this->db->insert($this->config->content_table, array_merge(($this->getSiteID() !== false ? array('site_id' => $this->getSiteID()) : array()), array('title' => $content['title'], 'content' => $content['content'], 'description' => $content['description'], 'uri' => PageUtil::cleanURL($content['uri']))));
         }
     }
     
@@ -83,7 +83,7 @@ class Page {
      */
     public function updatePage($pageID, $content = []){
         if(is_numeric($pageID) && is_array($content)){
-            return $this->db->update($this->config->content_table, array('title' => $content['title'], 'content' => $content['content'], 'description' => $content['description'], 'url' => PageUtil::cleanURL($content['url'])), array_merge(($this->getSiteID() !== false ? array('site_id' => $this->getSiteID()) : array()), array('id' => $pageID)), 1);
+            return $this->db->update($this->config->content_table, array('title' => $content['title'], 'content' => $content['content'], 'description' => $content['description'], 'uri' => PageUtil::cleanURL($content['uri'])), array_merge(($this->getSiteID() !== false ? array('site_id' => $this->getSiteID()) : array()), array('id' => $pageID)), 1);
         }
         return false;
     }
@@ -118,15 +118,15 @@ class Page {
      * @return array|false If any information exists they will be returned as an array else will return false
      */
     public function searchPages($search){
-        return $this->db->query("SELECT `title`, `content`, `url`, MATCH(`title`, `content`) AGAINST(:search) AS `score` FROM `{$this->config->content_table}` WHERE `site_id` = :siteid AND MATCH(`title`,`content`) AGAINST(:search IN BOOLEAN MODE)", array(':siteid' => $this->siteID, ':search' => $search));
+        return $this->db->query("SELECT `title`, `content`, `uri`, MATCH(`title`, `content`) AGAINST(:search) AS `score` FROM `{$this->config->content_table}` WHERE `site_id` = :siteid AND MATCH(`title`,`content`) AGAINST(:search IN BOOLEAN MODE)", array(':siteid' => $this->siteID, ':search' => $search));
     }
     
     /**
      * Checks to see if a URL exists
-     * @param string $url This should be the URL you are checking if it exists
+     * @param string $uri This should be the URL you are checking if it exists
      * @return int Will return the number of matching URLs (1 if exists and 0 if it doesn't)
      */
-    protected function checkIfURLExists($url){
-        return $this->db->count($this->config->content_table, array_merge(($this->getSiteID() !== false ? array('site_id' => $this->getSiteID()) : array()), array('url' => PageUtil::cleanURL($url))));
+    protected function checkIfURLExists($uri){
+        return $this->db->count($this->config->content_table, array_merge(($this->getSiteID() !== false ? array('site_id' => $this->getSiteID()) : array()), array('uri' => PageUtil::cleanURL($uri))));
     }
 }
