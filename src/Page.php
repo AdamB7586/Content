@@ -28,6 +28,7 @@ class Page {
      * Returns the page content
      * @param string $pageURI This should be th URI of the page you are retrieving content for
      * @param boolean $onlyActive If you only wish to retrieve active content then set this value to true
+     * @param array $additional Any additional fields to limit the search should be entered as an array
      * @return array|false If the content exists will return an array containing the information else will return false
      */
     public function getPage($pageURI, $onlyActive = true, $additional = []){
@@ -40,6 +41,7 @@ class Page {
     /**
      * Adds page content
      * @param array $content This should be the page content information as an array
+     * @param array $additional Any additional items to add should be entered as an array
      * @return boolean Returns true on success and false on failure
      */
     public function addPage($content, $additional = []){
@@ -52,6 +54,7 @@ class Page {
      * Updates page content
      * @param int $pageID This should be the unique page ID of the page that you are updating
      * @param array $content This should be all of the page information as an array
+     * @param array $additional Any additional items to limit the update should be entered as an array
      * @return boolean Returns true on success and false on failure
      */
     public function updatePage($pageID, $content = [], $additional = []){
@@ -64,6 +67,7 @@ class Page {
     /**
      * Disables a page so it's no longer active
      * @param int $pageID This should be the unique page ID of the page you are disabling
+     * @param array $additional Any additional items to limit the update should be entered as an array
      * @return boolean Returns true on success and false on failure
      */
     public function changePageStatus($pageID, $status = 0, $additional = []){
@@ -76,6 +80,7 @@ class Page {
     /**
      * Delete a given page
      * @param type $pageID This should be the unique page ID of the page you are deleting
+     * @param array $additional Any additional items to limit the delete should be entered as an array
      * @return boolean Returns true on success and false on failure
      */
     public function deletePage($pageID, $additional = []){
@@ -88,6 +93,7 @@ class Page {
     /**
      * Search page content
      * @param string $search This should be the text you wish to search the content on
+     * @param array $additional Any additional items to search on should be provided as an array
      * @return array|false If any information exists they will be returned as an array else will return false
      */
     public function searchPages($search, $additional = []){
@@ -106,6 +112,7 @@ class Page {
     /**
      * Checks to see if a URL exists
      * @param string $uri This should be the URL you are checking if it exists
+     * @param array $additional Any additional items to search on should be provided as an array
      * @return int Will return the number of matching URLs (1 if exists and 0 if it doesn't)
      */
     protected function checkIfURLExists($uri, $additional = []){
