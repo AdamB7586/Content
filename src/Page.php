@@ -56,12 +56,12 @@ class Page {
      * @param boolean $onlyActive If you only wish to retrieve active content then set this value to true
      * @return array|false If the content exists will return an array containing the information else will return false
      */
-    public function getPage($pageURI, $onlyActive = true){
+    public function getPage($pageURI, $onlyActive = true, $additional = []){
         $where = array();
         $where['uri'] = $pageURI;
         if($onlyActive == true){$where['active'] = 1;}
         if($this->getSiteID() !== false){$where['site_id'] = $this->getSiteID();}
-        return $this->db->select($this->config->content_table, $where);
+        return $this->db->select($this->config->content_table, array_merge($where, $additional));
     }
     
     /**
@@ -69,9 +69,9 @@ class Page {
      * @param array $content This should be the page content information as an array
      * @return boolean Returns true on success and false on failure
      */
-    public function addPage($content){
+    public function addPage($content, $additional = []){
         if(is_array($content) && $this->checkIfURLExists($content['uri']) === 0){
-            return $this->db->insert($this->config->content_table, array_merge(($this->getSiteID() !== false ? array('site_id' => $this->getSiteID()) : array()), array('title' => $content['title'], 'content' => $content['content'], 'description' => $content['description'], 'uri' => PageUtil::cleanURL($content['uri']))));
+            return $this->db->insert($this->config->content_table, array_merge(($this->getSiteID() !== false ? array('site_id' => $this->getSiteID()) : array()), array('title' => $content['title'], 'content' => $content['content'], 'description' => $content['description'], 'uri' => PageUtil::cleanURL($content['uri'])), $additional));
         }
     }
     
@@ -81,7 +81,7 @@ class Page {
      * @param array $content This should be all of the page information as an array
      * @return boolean Returns true on success and false on failure
      */
-    public function updatePage($pageID, $content = []){
+    public function updatePage($pageID, $content = [], $additional = []){
         if(is_numeric($pageID) && is_array($content)){
             return $this->db->update($this->config->content_table, array('title' => $content['title'], 'content' => $content['content'], 'description' => $content['description'], 'uri' => PageUtil::cleanURL($content['uri'])), array_merge(($this->getSiteID() !== false ? array('site_id' => $this->getSiteID()) : array()), array('id' => $pageID)), 1);
         }
@@ -93,9 +93,9 @@ class Page {
      * @param int $pageID This should be the unique page ID of the page you are disabling
      * @return boolean Returns true on success and false on failure
      */
-    public function disablePage($pageID){
-        if(is_numeric($pageID)){
-            return $this->db->update($this->config->content_table, array('active' => 0), array_merge(($this->getSiteID() !== false ? array('site_id' => $this->getSiteID()) : array()), array('id' => intval($pageID))), 1);
+    public function changePageStatus($pageID, $status = 0, $additional = []){
+        if(is_numeric($pageID) && is_numeric($status)){
+            return $this->db->update($this->config->content_table, array('active' => $status), array_merge(($this->getSiteID() !== false ? array('site_id' => $this->getSiteID()) : array()), array('id' => intval($pageID)), $additional), 1);
         }
         return false;
     }
@@ -105,9 +105,9 @@ class Page {
      * @param type $pageID This should be the unique page ID of the page you are deleting
      * @return boolean Returns true on success and false on failure
      */
-    public function deletePage($pageID){
+    public function deletePage($pageID, $additional = []){
         if(is_numeric($pageID)){
-            return $this->db->delete($this->config->content_table, array_merge(($this->getSiteID() !== false ? array('site_id' => $this->getSiteID()) : array()), array('id' => intval($pageID))), 1);
+            return $this->db->delete($this->config->content_table, array_merge(($this->getSiteID() !== false ? array('site_id' => $this->getSiteID()) : array()), array_merge($additional, array('id' => intval($pageID)))), 1);
         }
         return false;
     }
@@ -118,7 +118,7 @@ class Page {
      * @return array|false If any information exists they will be returned as an array else will return false
      */
     public function searchPages($search){
-        return $this->db->query("SELECT `title`, `content`, `uri`, MATCH(`title`, `content`) AGAINST(:search) AS `score` FROM `{$this->config->content_table}` WHERE `site_id` = :siteid AND MATCH(`title`,`content`) AGAINST(:search IN BOOLEAN MODE)", array(':siteid' => $this->siteID, ':search' => $search));
+        return $this->db->query("SELECT `title`, `content`, `uri`, MATCH(`title`, `content`) AGAINST(:search) AS `score` FROM `{$this->config->content_table}` WHERE ".(s_numeric($this->getSiteID()) ? "`site_id` = :siteid AND " : "")."MATCH(`title`,`content`) AGAINST(:search IN BOOLEAN MODE)", array(':siteid' => $this->getSiteID(), ':search' => $search));
     }
     
     /**
