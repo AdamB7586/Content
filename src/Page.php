@@ -10,8 +10,6 @@ class Page {
     protected $db;
     protected $config;
     protected $htmlParser;
-    
-    public $siteID;
 
     /**
      * 

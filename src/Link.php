@@ -10,45 +10,17 @@ class Link {
     protected $db;
     protected $config;
     protected $image;
-    
-    public $siteID;
 
     /**
      * Constructor
      * @param Database $db
      * @param int|false $siteID
      */
-    public function __construct(Database $db, Config $config, $imageFolder = '/images/links', $siteID = false) {
+    public function __construct(Database $db, Config $config, $imageFolder = '/images/links') {
         $this->db = $db;
         $this->config = $config;
-        if(is_numeric($siteID)) {
-            $this->siteID = intval($siteID);
-        }
         $this->image = new ImageUpload();
         $this->setImageFolder($imageFolder);
-    }
-    
-    /**
-     * Sets the site ID if multiple site contents are stored within the same database
-     * @param int $siteID This should be the site ID for the site you are getting content for
-     * @return $this
-     */
-    public function setSiteID($siteID){
-        if(is_numeric($siteID)){
-            $this->siteID = intval($siteID);
-        }
-        return $this;
-    }
-    
-    /**
-     * Returns the site ID if it is set else will return false
-     * @return int|boolean If the site ID is set will return the ID else will return false
-     */
-    public function getSiteID(){
-        if(is_int($this->siteID)){
-            return $this->siteID;
-        }
-        return false;
     }
     
     /**
@@ -74,11 +46,10 @@ class Link {
      * @param boolean $active If you only want to display active links set to true (default) else set to false
      * @return array|false If any link items exist they will be returned as an array else will return false if no links exist
      */
-    public function listLinks($active = true){
+    public function listLinks($active = true, $additional = []){
         $where = [];
         if($active === true){$where['active'] = 1;}
-        if($this->getSiteID() !== false){$where['site_id'] = $this->getSiteID();}
-        return $this->db->selectAll($this->config->links_table, $where);
+        return $this->db->selectAll($this->config->links_table, array_merge($additional, $where));
     }
     
     /**
@@ -86,10 +57,9 @@ class Link {
      * @param int $linkID This should be the unique link ID
      * @return array|boolean If the link exists it will be returned as an array else will return false
      */
-    public function getLinkInfo($linkID) {
+    public function getLinkInfo($linkID, $additional = []) {
         if(is_numeric($linkID)){
-            if($this->getSiteID() !== false){$where['site_id'] = $this->getSiteID();}
-            return $this->db->select($this->config->links_table, array_merge($where, array('id' => $linkID)));
+            return $this->db->select($this->config->links_table, array_merge($additional, array('id' => $linkID)));
         }
         return false;
     }
@@ -100,7 +70,7 @@ class Link {
      * @param array $image If you would like to upload an image file include the $_FILES information here
      * @return boolean If successfully added will return true else returns false
      */
-    public function addLink($linkInfo, $image = NULL) {
+    public function addLink($linkInfo, $image = NULL, $additional = []) {
         $imageInfo = [];
         $imageupload = false;
         if(is_array($image)){$imageupload = $this->image->uploadImage($image);}
@@ -119,7 +89,7 @@ class Link {
      * @param array $image If you would like to upload an image file include the $_FILES information here
      * @return boolean If successfully updated will return true else returns false
      */
-    public function editLink($linkID, $linkInfo, $image = NULL) {
+    public function editLink($linkID, $linkInfo, $image = NULL, $additional = []) {
         if(is_numeric($linkID) && is_array($linkInfo)){
             $imageInfo = [];
             $imageupload = false;
@@ -128,8 +98,7 @@ class Link {
                 list($width, $height) = getimagesize($this->image->getImageFolder().$image['name']);
                 $imageInfo = array('image' => $image['name'], 'image_width' => $width, 'image_height' => $height);
             }
-            if($this->getSiteID() !== false){$where['site_id'] = $this->getSiteID();}else{$where = [];}
-            return $this->db->update($this->config->links_table, array_merge($linkInfo, $imageInfo), array_merge($where, array('id' => $linkID)));
+            return $this->db->update($this->config->links_table, array_merge($linkInfo, $imageInfo), array_merge($additional, array('id' => $linkID)));
         }
         return false;
     }
@@ -139,10 +108,9 @@ class Link {
      * @param int $linkID This should be the unique link ID
      * @return boolean If successfully deleted will return true else returns false
      */
-    public function deleteLink($linkID) {
+    public function deleteLink($linkID, $additional = []) {
         if(is_numeric($linkID)){
-            if($this->getSiteID() !== false){$where['site_id'] = $this->getSiteID();}else{$where = [];}
-            return $this->db->delete($this->config->links_table, array_merge($where, array('id' => $linkID)));
+            return $this->db->delete($this->config->links_table, array_merge($additional, array('id' => $linkID)));
         }
         return false;
     }
@@ -153,10 +121,9 @@ class Link {
      * @param int $status This should be the new status to assign to the link
      * @return boolean If successfully updated will return true else returns false
      */
-    public function disableLink($linkID, $status = 0) {
+    public function changeLinkStatus($linkID, $status = 0, $additional = []) {
         if(is_numeric($linkID) && is_numeric($status)){
-            if($this->getSiteID() !== false){$where['site_id'] = $this->getSiteID();}else{$where = [];}
-            return $this->db->update($this->config->links_table, array('active' => $status), array_merge($where, array('id' => $linkID)));
+            return $this->db->update($this->config->links_table, array('active' => $status), array_merge($additional, array('id' => $linkID)));
         }
         return false;
     }
