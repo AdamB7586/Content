@@ -79,7 +79,7 @@ class Link {
             $imageInfo = array('image' => $image['name'], 'image_width' => $width, 'image_height' => $height);
         }
         if($this->getSiteID() !== false){$linkInfo['site_id'] = $this->getSiteID();}
-        return $this->db->insert($this->config->links_table, array_merge($linkInfo, $imageInfo));
+        return $this->db->insert($this->config->links_table, array_merge($additional, $linkInfo, $imageInfo));
     }
     
     /**

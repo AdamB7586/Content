@@ -1,7 +1,6 @@
 DROP TABLE IF EXISTS `links`;
 CREATE TABLE IF NOT EXISTS `links` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `site_id` int(10) UNSIGNED,
   `link` varchar(255) NOT NULL,
   `link_text` varchar(50) NOT NULL,
   `image` varchar(155) DEFAULT NULL,
@@ -15,7 +14,6 @@ CREATE TABLE IF NOT EXISTS `links` (
 DROP TABLE IF EXISTS `pages`;
 CREATE TABLE IF NOT EXISTS `pages` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `site_id` int(10) UNSIGNED,
   `uri` varchar(150) NOT NULL,
   `title` varchar(150) NOT NULL,
   `content` text NOT NULL,
