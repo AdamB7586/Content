@@ -5,6 +5,7 @@ namespace Content;
 use DBAL\Database;
 use Configuration\Config;
 use Content\Utilities\PageUtil;
+use Sunra\PhpSimple\HtmlDomParser;
 
 class Page {
     protected $db;
