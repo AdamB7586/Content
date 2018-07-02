@@ -7,8 +7,7 @@ CREATE TABLE IF NOT EXISTS `links` (
   `image_width` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `image_height` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `active` tinyint(3) UNSIGNED NOT NULL DEFAULT '1',
-  PRIMARY KEY (`id`),
-  KEY `site_id` (`site_id`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `pages`;
@@ -22,6 +21,6 @@ CREATE TABLE IF NOT EXISTS `pages` (
   `active` tinyint(3) UNSIGNED NOT NULL DEFAULT '1',
   `required` tinyint(3) UNSIGNED NOT NULL DEFAULT '0',
   `last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `unique_page` (`site_id`,`url`)
+  PRIMARY KEY (`page_id`),
+  UNIQUE KEY `unique_page` (`url`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
