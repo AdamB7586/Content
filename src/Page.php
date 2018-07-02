@@ -34,7 +34,11 @@ class Page {
         $where = array();
         $where['uri'] = $pageURI;
         if($onlyActive == true){$where['active'] = 1;}
-        return $this->db->select($this->config->content_table, array_merge($where, $additional));
+        $page = $this->db->select($this->config->content_table, array_merge($where, $additional));
+        if($page['additional'] !== NULL){
+            $page['additional'] = unserialize($page['additional']);
+        }
+        return $page;
     }
     
     /**
