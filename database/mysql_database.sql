@@ -22,5 +22,5 @@ CREATE TABLE IF NOT EXISTS `pages` (
   `required` tinyint(3) UNSIGNED NOT NULL DEFAULT '0',
   `last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`page_id`),
-  UNIQUE KEY `unique_page` (`url`)
+  UNIQUE KEY `unique_page` (`uri`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
