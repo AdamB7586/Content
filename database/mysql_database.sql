@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS `links` (
 
 DROP TABLE IF EXISTS `pages`;
 CREATE TABLE IF NOT EXISTS `pages` (
-  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `page_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `uri` varchar(150) NOT NULL,
   `title` varchar(150) NOT NULL,
   `content` text NOT NULL,

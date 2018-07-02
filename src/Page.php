@@ -57,7 +57,7 @@ class Page {
      */
     public function updatePage($pageID, $content = [], $additional = []){
         if(is_numeric($pageID) && is_array($content)){
-            return $this->db->update($this->config->content_table, array_merge(['title' => $content['title'], 'content' => $content['content'], 'description' => $content['description'], 'uri' => PageUtil::cleanURL($content['uri'])], $additional), ['id' => $pageID], 1);
+            return $this->db->update($this->config->content_table, array_merge(['title' => $content['title'], 'content' => $content['content'], 'description' => $content['description'], 'uri' => PageUtil::cleanURL($content['uri'])], $additional), ['page_id' => $pageID], 1);
         }
         return false;
     }
@@ -70,7 +70,7 @@ class Page {
      */
     public function changePageStatus($pageID, $status = 0, $additional = []){
         if(is_numeric($pageID) && is_numeric($status)){
-            return $this->db->update($this->config->content_table, ['active' => $status], array_merge(['id' => intval($pageID)], $additional), 1);
+            return $this->db->update($this->config->content_table, ['active' => $status], array_merge(['page_id' => intval($pageID)], $additional), 1);
         }
         return false;
     }
@@ -83,7 +83,7 @@ class Page {
      */
     public function deletePage($pageID, $additional = []){
         if(is_numeric($pageID)){
-            return $this->db->delete($this->config->content_table, array_merge(['id' => intval($pageID)], $additional), 1);
+            return $this->db->delete($this->config->content_table, array_merge(['page_id' => intval($pageID)], $additional), 1);
         }
         return false;
     }
