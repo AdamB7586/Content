@@ -31,7 +31,7 @@ class Page {
      * @return array|false If the content exists will return an array containing the information else will return false
      */
     public function getPage($pageURI, $onlyActive = true, $additional = []){
-        $where = array();
+        $where = [];
         $where['uri'] = $pageURI;
         if($onlyActive == true){$where['active'] = 1;}
         $page = $this->db->select($this->config->content_table, array_merge($where, $additional));

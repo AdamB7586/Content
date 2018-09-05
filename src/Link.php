@@ -13,8 +13,9 @@ class Link {
 
     /**
      * Constructor
-     * @param Database $db
-     * @param int|false $siteID
+     * @param DBAL\Database $db
+     * @param Configuration\Config $config
+     * @param string $imageFolder
      */
     public function __construct(Database $db, Config $config, $imageFolder = '/images/links') {
         $this->db = $db;
@@ -59,7 +60,7 @@ class Link {
      */
     public function getLinkInfo($linkID, $additional = []) {
         if(is_numeric($linkID)){
-            return $this->db->select($this->config->links_table, array_merge($additional, array('id' => $linkID)));
+            return $this->db->select($this->config->links_table, array_merge($additional, ['id' => $linkID]));
         }
         return false;
     }
@@ -76,9 +77,8 @@ class Link {
         if(is_array($image)){$imageupload = $this->image->uploadImage($image);}
         if($imageupload === true && file_exists($this->image->getImageFolder().$image['name'])){
             list($width, $height) = getimagesize($this->image->getImageFolder().$image['name']);
-            $imageInfo = array('image' => $image['name'], 'image_width' => $width, 'image_height' => $height);
+            $imageInfo = ['image' => $image['name'], 'image_width' => $width, 'image_height' => $height];
         }
-        if($this->getSiteID() !== false){$linkInfo['site_id'] = $this->getSiteID();}
         return $this->db->insert($this->config->links_table, array_merge($additional, $linkInfo, $imageInfo));
     }
     
@@ -96,9 +96,9 @@ class Link {
             if(is_array($image)){$imageupload = $this->image->uploadImage($image);}
             if($imageupload === true && file_exists($this->image->getImageFolder().$image['name'])){
                 list($width, $height) = getimagesize($this->image->getImageFolder().$image['name']);
-                $imageInfo = array('image' => $image['name'], 'image_width' => $width, 'image_height' => $height);
+                $imageInfo = ['image' => $image['name'], 'image_width' => $width, 'image_height' => $height];
             }
-            return $this->db->update($this->config->links_table, array_merge($linkInfo, $imageInfo), array_merge($additional, array('id' => $linkID)));
+            return $this->db->update($this->config->links_table, array_merge($linkInfo, $imageInfo), array_merge($additional, ['id' => $linkID]));
         }
         return false;
     }
@@ -110,7 +110,7 @@ class Link {
      */
     public function deleteLink($linkID, $additional = []) {
         if(is_numeric($linkID)){
-            return $this->db->delete($this->config->links_table, array_merge($additional, array('id' => $linkID)));
+            return $this->db->delete($this->config->links_table, array_merge($additional, ['id' => $linkID]));
         }
         return false;
     }
@@ -123,7 +123,7 @@ class Link {
      */
     public function changeLinkStatus($linkID, $status = 0, $additional = []) {
         if(is_numeric($linkID) && is_numeric($status)){
-            return $this->db->update($this->config->links_table, array('active' => $status), array_merge($additional, array('id' => $linkID)));
+            return $this->db->update($this->config->links_table, ['active' => $status], array_merge($additional, ['id' => $linkID]));
         }
         return false;
     }
