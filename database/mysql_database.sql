@@ -1,4 +1,3 @@
-DROP TABLE IF EXISTS `links`;
 CREATE TABLE IF NOT EXISTS `links` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `link` varchar(255) NOT NULL,
@@ -10,7 +9,6 @@ CREATE TABLE IF NOT EXISTS `links` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-DROP TABLE IF EXISTS `pages`;
 CREATE TABLE IF NOT EXISTS `pages` (
   `page_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `uri` varchar(150) NOT NULL,
@@ -24,3 +22,7 @@ CREATE TABLE IF NOT EXISTS `pages` (
   PRIMARY KEY (`page_id`),
   UNIQUE KEY `unique_page` (`uri`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO `config` (`setting`, `value`) VALUES
+('links_table', 'links'),
+('content_table', 'pages');

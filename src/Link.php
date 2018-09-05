@@ -30,7 +30,9 @@ class Link {
      * @return $this
      */
     public function setImageFolder($folder){
-        $this->image->setImageFolder($folder);
+        if(is_string($folder)){
+            $this->image->setImageFolder($folder);
+        }
         return $this;
     }
     

@@ -3,6 +3,7 @@ namespace Content\Tests;
 
 use PHPUnit\Framework\TestCase;
 use DBAL\Database;
+use Configuration\Config;
 use Content\Page;
 
 class PageTest extends TestCase {
@@ -16,30 +17,15 @@ class PageTest extends TestCase {
                 'No local database connection is available'
             );
         }
+        $this->db->query(file_get_contents(dirname(dirname(__FILE__)).'/vendor/adamb/config/database/database_mysql.sql'));
         $this->db->query(file_get_contents(dirname(dirname(__FILE__)).'/database/mysql_database.sql'));
         $this->db->query(file_get_contents(dirname(__FILE__).'/sample_data/pages.sql'));
-        $this->page = new Page($this->db);
+        $this->page = new Page($this->db, new Config($this->db));
     }
     
     public function tearDown() {
         $this->db = null;
         $this->page = null;
-    }
-    
-    /**
-     * @covers Content\Page::__construct
-     * @covers Content\Page::getContentTable
-     * @covers Content\Page::setContentTable
-     */
-    public function testChangeDatabaseTable() {
-        $this->assertEquals('pages', $this->page->getContentTable());
-        $this->assertObjectHasAttribute('siteID', $this->page->setContentTable('my_pages_table'));
-        $this->assertEquals('my_pages_table', $this->page->getContentTable());
-        $this->assertObjectHasAttribute('siteID', $this->page->setContentTable(42));
-        $this->assertNotEquals(42, $this->page->getContentTable());
-        $this->assertObjectHasAttribute('siteID', $this->page->setContentTable(false));
-        $this->assertNotEquals(false, $this->page->getContentTable());
-        $this->assertEquals('my_pages_table', $this->page->getContentTable());
     }
     
     /**
