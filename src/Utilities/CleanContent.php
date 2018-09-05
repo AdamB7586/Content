@@ -23,19 +23,24 @@ class CleanContent {
     }
     
     private function validateImages(){
-        foreach($this->html->find('img') as $images){
-            $this->CSSParse($images->style);
-            if(!$images->width && $this->css['width']){$images->width = str_replace('px', '', $this->css['width']);}
-            if(!$images->height && $this->css['height']){$images->height = str_replace('px', '', $this->css['height']);}
-            if($this->css['float']){if($images->class){$images->class.= ' '.$this->css['float'];}else{$images->class = $this->css['float'];}}
-            $images->style = null;
+        $imageFind = $this->html->find('img');
+        if(is_array($imageFind) && !empty($imageFind)){
+            foreach($imageFind as $images){
+                $this->CSSParse($images->style);
+                if(!$images->width && $this->css['width']){$images->width = str_replace('px', '', $this->css['width']);}
+                if(!$images->height && $this->css['height']){$images->height = str_replace('px', '', $this->css['height']);}
+                if($this->css['float']){if($images->class){$images->class.= ' '.$this->css['float'];}else{$images->class = $this->css['float'];}}
+                $images->style = null;
+            }
         }
     }
     
     private function CSSParse($css){
         preg_match_all('~([a-z-]+)\s*:\s*([^;$]+)~si', $css, $matches, PREG_SET_ORDER);
-        foreach($matches as $match){
-            $this->css[$match[1]] = isset($match[2]) ? $match[2] : null;
+        if(is_array($matches) && !empty($matches)){
+            foreach($matches as $match){
+                $this->css[$match[1]] = isset($match[2]) ? $match[2] : null;
+            }
         }
     }
     
