@@ -5,11 +5,14 @@ namespace Content;
 use DBAL\Database;
 use Configuration\Config;
 use ImgUpload\ImageUpload;
+use Gumlet\ImageResize;
 
 class Link {
     protected $db;
     protected $config;
     protected $image;
+    
+    public $maxImageWidth = false;
 
     /**
      * Constructor
@@ -29,7 +32,7 @@ class Link {
      * @param string $folder This should be the name of the folder that the main images will be uploaded to
      * @return $this
      */
-    public function setImageFolder($folder){
+    public function setImageFolder($folder) {
         if(is_string($folder)){
             $this->image->setImageFolder($folder);
         }
@@ -40,16 +43,28 @@ class Link {
      * Returns the image folder
      * @return string Returns the image folder string
      */
-    public function getImageFolder(){
+    public function getImageFolder() {
         return $this->image->getImageFolder();
     }
     
+    public function setMaxImageWidth($width) {
+        if(is_numeric($width) || $width === false) {
+            $this->maxImageWidth = $width;
+        }
+        return $this;
+    }
+    
+    public function getMaxImageWidth() {
+        return $this->maxImageWidth;
+    }
+
+
     /**
      * Returns a list of all of the relevant links
      * @param boolean $active If you only want to display active links set to true (default) else set to false
      * @return array|false If any link items exist they will be returned as an array else will return false if no links exist
      */
-    public function listLinks($active = true, $additional = []){
+    public function listLinks($active = true, $additional = []) {
         $where = [];
         if($active === true){$where['active'] = 1;}
         return $this->db->selectAll($this->config->links_table, array_merge($additional, $where));
@@ -74,14 +89,7 @@ class Link {
      * @return boolean If successfully added will return true else returns false
      */
     public function addLink($linkInfo, $image = NULL, $additional = []) {
-        $imageInfo = [];
-        $imageupload = false;
-        if(is_array($image)){$imageupload = $this->image->uploadImage($image);}
-        if($imageupload === true && file_exists($this->image->getImageFolder().$image['name'])){
-            list($width, $height) = getimagesize($this->image->getImageFolder().$image['name']);
-            $imageInfo = ['image' => $image['name'], 'image_width' => $width, 'image_height' => $height];
-        }
-        return $this->db->insert($this->config->links_table, array_merge($additional, $linkInfo, $imageInfo));
+        return $this->db->insert($this->config->links_table, array_merge($additional, $linkInfo, $this->imageUpload($image)));
     }
     
     /**
@@ -93,14 +101,7 @@ class Link {
      */
     public function editLink($linkID, $linkInfo, $image = NULL, $additional = []) {
         if(is_numeric($linkID) && is_array($linkInfo)){
-            $imageInfo = [];
-            $imageupload = false;
-            if(is_array($image)){$imageupload = $this->image->uploadImage($image);}
-            if($imageupload === true && file_exists($this->image->getImageFolder().$image['name'])){
-                list($width, $height) = getimagesize($this->image->getImageFolder().$image['name']);
-                $imageInfo = ['image' => $image['name'], 'image_width' => $width, 'image_height' => $height];
-            }
-            return $this->db->update($this->config->links_table, array_merge($linkInfo, $imageInfo), array_merge($additional, ['id' => $linkID]));
+            return $this->db->update($this->config->links_table, array_merge($linkInfo, $this->imageUpload($image)), array_merge($additional, ['id' => $linkID]));
         }
         return false;
     }
@@ -128,5 +129,16 @@ class Link {
             return $this->db->update($this->config->links_table, ['active' => $status], array_merge($additional, ['id' => $linkID]));
         }
         return false;
+    }
+    
+    protected function imageUpload($image) {
+        $imageInfo = [];
+        $imageupload = false;
+        if(is_array($image)){$imageupload = $this->image->uploadImage($image);}
+        if($imageupload === true && file_exists($this->image->getImageFolder().$image['name'])){
+            list($width, $height) = getimagesize($this->image->getImageFolder().$image['name']);
+            $imageInfo = ['image' => $image['name'], 'image_width' => $width, 'image_height' => $height];
+        }
+        return $imageInfo;
     }
 }
