@@ -47,17 +47,29 @@ class Link {
         return $this->image->getImageFolder();
     }
     
+    /**
+     * Sets the maximum allows width for an image
+     * @param int|false $width This should be the maximum allowed with for the image if it need to be set else set to false for no maximum
+     * @return $this
+     */
     public function setMaxImageWidth($width) {
         if(is_numeric($width) || $width === false) {
+            $this->image->setMinWidth($width);
             $this->maxImageWidth = $width;
         }
         return $this;
     }
     
+    /**
+     * Returns the maximum image width
+     * @return int|false This will return the maximum image width if set else will return false
+     */
     public function getMaxImageWidth() {
-        return $this->maxImageWidth;
+        if(is_numeric($this->maxImageWidth)){
+            return $this->maxImageWidth;
+        }
+        return false;
     }
-
 
     /**
      * Returns a list of all of the relevant links
@@ -131,10 +143,25 @@ class Link {
         return false;
     }
     
+    /**
+     * Upload an image if one is set
+     * @param array|NULL $image This should be the image information array
+     * @return array Returns the image information to insert into the database
+     */
     protected function imageUpload($image) {
         $imageInfo = [];
         $imageupload = false;
-        if(is_array($image)){$imageupload = $this->image->uploadImage($image);}
+        if(is_array($image)){
+            if($this->getMaxImageWidth()){
+                $resize = new ImageResize($image['tmp_name']);
+                $resize->resizeToWidth($this->getMaxImageWidth());
+                $resize->save($this->getImageFolder().$image['name']);
+                $imageupload = true;
+            }
+            else{
+                $imageupload = $this->image->uploadImage($image);
+            }
+        }
         if($imageupload === true && file_exists($this->image->getImageFolder().$image['name'])){
             list($width, $height) = getimagesize($this->image->getImageFolder().$image['name']);
             $imageInfo = ['image' => $image['name'], 'image_width' => $width, 'image_height' => $height];
