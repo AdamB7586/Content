@@ -185,7 +185,7 @@ class Link {
         }
         if($imageupload === true && file_exists($this->image->getImageFolder().$image['name'])){
             list($width, $height) = getimagesize($this->image->getImageFolder().$image['name']);
-            $imageInfo = ['image' => ($this->getStoreFolder() ? $this->image->getImageFolder().$image['name'] : $image['folder']), 'image_width' => $width, 'image_height' => $height];
+            $imageInfo = ['image' => ($this->getStoreFolder() ? '/'.str_replace('\\', '/', $this->image->getImageFolder()).$image['name'] : $image['folder']), 'image_width' => $width, 'image_height' => $height];
         }
         return $imageInfo;
     }
