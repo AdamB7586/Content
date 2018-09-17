@@ -165,6 +165,19 @@ class Link {
     }
     
     /**
+     * Removed the image from the link information and deletes the image file from the server
+     * @param int $linkID This should be the unique link ID 
+     * @return boolean Returns true if successfully removed the image information
+     */
+    public function deleteImage($linkID) {
+        $info = $this->getLinkInfo($linkID);
+        if(file_exists($this->image->getRootFolder().($this->getStoreFolder() ? $info['image'] : '/'.str_replace('\\', '/', $this->image->getImageFolder()).$info['name']))){
+            unlink($this->image->getRootFolder().($this->getStoreFolder() ? $info['image'] : '/'.str_replace('\\', '/', $this->image->getImageFolder()).$info['name']));
+        }
+        return $this->db->update($this->config->links_table, ['image' => NULL, 'image_width' => 0, 'image_height' => 0], ['id' => $linkID]);
+    }
+    
+    /**
      * Upload an image if one is set
      * @param array|NULL $image This should be the image information array
      * @return array Returns the image information to insert into the database
