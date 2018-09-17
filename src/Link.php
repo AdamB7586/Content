@@ -13,6 +13,7 @@ class Link {
     protected $image;
     
     public $maxImageWidth = false;
+    public $storeFolder = false;
 
     /**
      * Constructor
@@ -69,6 +70,26 @@ class Link {
             return $this->maxImageWidth;
         }
         return false;
+    }
+    
+    /**
+     * Sets the option if the folder location should be stored in the database with the filename
+     * @param boolean $boolean This should be either true of false
+     * @return $this
+     */
+    public function setStoreFolder($boolean = true){
+        if(is_bool($boolean)){
+            $this->storeFolder = $boolean;
+        }
+        return $this;
+    }
+    
+    /**
+     * Returns a boolean whether to store the folder location in the database or not
+     * @return boolean Returns true if the folder should be stored else returns false
+     */
+    public function getStoreFolder(){
+        return $this->storeFolder;
     }
 
     /**
@@ -164,7 +185,7 @@ class Link {
         }
         if($imageupload === true && file_exists($this->image->getImageFolder().$image['name'])){
             list($width, $height) = getimagesize($this->image->getImageFolder().$image['name']);
-            $imageInfo = ['image' => $image['name'], 'image_width' => $width, 'image_height' => $height];
+            $imageInfo = ['image' => ($this->getStoreFolder() ? $this->image->getImageFolder().$image['name'] : $image['folder']), 'image_width' => $width, 'image_height' => $height];
         }
         return $imageInfo;
     }
