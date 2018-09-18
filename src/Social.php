@@ -34,10 +34,35 @@ class Social {
         $bookmarks = $this->db->selectAll($this->config->table_social_bookmarks, $where);
         if(is_array($bookmarks) && $orig === false){
             foreach($bookmarks as $i => $item){
-                $bookmarks[$i]['location'] = str_replace(' ', '%20', sprintf($item['location'], rawurlencode($domain), rawurlencode($title)));
+                $bookmarks[$i]['location'] = $this->buildLink($item['location'], $domain, $title);
             }
         }
         return $bookmarks;
+    }
+    
+    /**
+     * Gets the bookmark information for a single link
+     * @param int $bookmarkID This should be the unique bookmark id
+     * @param boolean $active If you only want to get it if it is active
+     * @param boolean $orig If you want the original link from the database set to true else set to false
+     * @param string $domain This should be the domain to add to the social bookmark link
+     * @param string $title This should be the page title to add to the bookmark link
+     * @return array|false If any information exists returns an array else returns false
+     */
+    public function getBookmarkInfo($bookmarkID, $active = false, $orig = false, $domain = '', $title = '') {
+        if(is_numeric($bookmarkID)){
+            $where = [];
+            $where['id'] = $bookmarkID;
+            if($active === true){
+                $where['active'] = 1;
+            }
+            $bookmarkInfo = $this->db->select($this->config->table_social_bookmarks, $where);
+            if(is_array($bookmarkInfo) && $orig === false){
+                $bookmarkInfo['location'] = $this->buildLink($bookmarkInfo['location'], $domain, $title);
+            }
+            return $bookmarkInfo;
+        }
+        return false;
     }
     
     /**
@@ -74,5 +99,16 @@ class Social {
             return $this->db->delete($this->config->table_social_bookmarks, ['id' => $bookmarkID]);
         }
         return false;
+    }
+    
+    /**
+     * Build the link for the URL
+     * @param string $link This should be the link string for use with the sprintf function
+     * @param string $url This should be the URL to add to the URL
+     * @param string $title This should be the page title to add to the string
+     * @return string This will be the URL string
+     */
+    protected function buildLink($link, $url, $title) {
+        return str_replace(' ', '%20', sprintf($link, rawurlencode($url), rawurlencode($title)));
     }
 }
