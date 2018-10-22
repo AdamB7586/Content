@@ -82,7 +82,7 @@ class Page {
     
     /**
      * Delete a given page
-     * @param type $pageID This should be the unique page ID of the page you are deleting
+     * @param int $pageID This should be the unique page ID of the page you are deleting
      * @param array $additional Any additional items to limit the delete should be entered as an array
      * @return boolean Returns true on success and false on failure
      */
@@ -110,6 +110,30 @@ class Page {
             }
         }
         return $this->db->query("SELECT `title`, `content`, `uri`, MATCH(`title`, `content`) AGAINST(:search) AS `score` FROM `{$this->config->content_table}` WHERE MATCH(`title`,`content`) AGAINST(:search IN BOOLEAN MODE){$sql} ORDER BY `score` DESC;", $values);
+    }
+    
+    /**
+     * List all of the pages
+     * @param boolean $onlyActive If you only want active pages set to true else set to false
+     * @param int $start This should be the start point you want to start returning in the number of records
+     * @param int $limit This should be the maximum number of records to display
+     * @return array|false If any results exist they will be returned as an array else will return false
+     */
+    public function listPages($onlyActive = false, $start = 0, $limit = 50){
+        $where = [];
+        if($onlyActive == true){$where['active'] = 1;}
+        return $this->db->selectAll($this->config->content_table, $where, '*', [], [intval($start) => intval($limit)]);
+    }
+    
+    /**
+     * Returns the total number of pages that exits in the database
+     * @param boolean $onlyActive If you only want to count active pages set to true else leave as the dafault false
+     * @return int Returns the total number of pages
+     */
+    public function countPages($onlyActive = false){
+        $where = [];
+        if($onlyActive == true){$where['active'] = 1;}
+        return $this->db->count($this->config->content_table, $where);
     }
     
     /**
