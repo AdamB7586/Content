@@ -127,7 +127,7 @@ class Page {
     
     /**
      * Returns the total number of pages that exits in the database
-     * @param boolean $onlyActive If you only want to count active pages set to true else leave as the dafault false
+     * @param boolean $onlyActive If you only want to count active pages set to true else leave as the default false
      * @return int Returns the total number of pages
      */
     public function countPages($onlyActive = false){
