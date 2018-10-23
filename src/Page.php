@@ -25,7 +25,7 @@ class Page {
 
     /**
      * Returns the page content
-     * @param string $pageURI This should be th URI of the page you are retrieving content for
+     * @param string $pageURI This should be the URI of the page you are retrieving content for
      * @param boolean $onlyActive If you only wish to retrieve active content then set this value to true
      * @param array $additional Any additional fields to limit the search should be entered as an array
      * @return array|false If the content exists will return an array containing the information else will return false
@@ -34,11 +34,31 @@ class Page {
         $where = [];
         $where['uri'] = $pageURI;
         if($onlyActive == true){$where['active'] = 1;}
-        $page = $this->db->select($this->config->content_table, array_merge($where, $additional));
-        if($page['additional'] !== NULL){
-            $page['additional'] = unserialize($page['additional']);
+        return $this->buildPageInfo($this->db->select($this->config->content_table, array_merge($where, $additional)));
+    }
+    
+    /**
+     * Returns the page content based on the page ID
+     * @param int $pageID This should be the unique page ID
+     * @return array|false If the page ID exists will return the page information as an array else will return false
+     */
+    public function getPageByID($pageID){
+        return $this->buildPageInfo($this->db->select($this->config->content_table, ['page_id' => intval($pageID)]));
+    }
+    
+    /**
+     * Returns the formatted page information
+     * @param array|false $page This should be the page information array if it exists
+     * @return array|false The page information will be returned if it exists else false will be returned 
+     */
+    protected function buildPageInfo($page){
+        if(is_array($page)) {
+            if($page['additional'] !== NULL){
+                $page['additional'] = unserialize($page['additional']);
+            }
+            return $page;
         }
-        return $page;
+        return false;
     }
     
     /**
