@@ -137,12 +137,13 @@ class Page {
      * @param boolean $onlyActive If you only want active pages set to true else set to false
      * @param int $start This should be the start point you want to start returning in the number of records
      * @param int $limit This should be the maximum number of records to display
+     * @param array $order This should be how you wish to order the search results
      * @return array|false If any results exist they will be returned as an array else will return false
      */
-    public function listPages($onlyActive = false, $start = 0, $limit = 50){
+    public function listPages($onlyActive = false, $start = 0, $limit = 50, $order = []){
         $where = [];
         if($onlyActive == true){$where['active'] = 1;}
-        return $this->db->selectAll($this->config->content_table, $where, '*', [], [intval($start) => intval($limit)]);
+        return $this->db->selectAll($this->config->content_table, $where, '*', $order, [intval($start) => intval($limit)]);
     }
     
     /**
