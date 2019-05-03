@@ -24,5 +24,6 @@ CREATE TABLE IF NOT EXISTS `pages` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 INSERT INTO `config` (`setting`, `value`) VALUES
-('links_table', 'links'),
-('content_table', 'pages');
+('table_links', 'links'),
+('table_content', 'pages'),
+('table_social_bookmarks', 'social_bookmarks')

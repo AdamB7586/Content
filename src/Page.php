@@ -34,7 +34,7 @@ class Page {
         $where = [];
         $where['uri'] = $pageURI;
         if($onlyActive == true){$where['active'] = 1;}
-        return $this->buildPageInfo($this->db->select($this->config->content_table, array_merge($where, $additional)));
+        return $this->buildPageInfo($this->db->select($this->config->table_content, array_merge($where, $additional)));
     }
     
     /**
@@ -43,7 +43,7 @@ class Page {
      * @return array|false If the page ID exists will return the page information as an array else will return false
      */
     public function getPageByID($pageID){
-        return $this->buildPageInfo($this->db->select($this->config->content_table, ['page_id' => intval($pageID)]));
+        return $this->buildPageInfo($this->db->select($this->config->table_content, ['page_id' => intval($pageID)]));
     }
     
     /**
@@ -69,7 +69,7 @@ class Page {
      */
     public function addPage($content, $additional = []){
         if(is_array($content) && $this->checkIfURLExists($content['uri'], $additional) === 0){
-            return $this->db->insert($this->config->content_table, array_merge(['title' => $content['title'], 'content' => $content['content'], 'description' => $content['description'], 'uri' => PageUtil::cleanURL($content['uri'])], $additional));
+            return $this->db->insert($this->config->table_content, array_merge(['title' => $content['title'], 'content' => $content['content'], 'description' => $content['description'], 'uri' => PageUtil::cleanURL($content['uri'])], $additional));
         }
     }
     
@@ -82,7 +82,7 @@ class Page {
      */
     public function updatePage($pageID, $content = [], $additional = []){
         if(is_numeric($pageID) && is_array($content)){
-            return $this->db->update($this->config->content_table, array_merge(['title' => $content['title'], 'content' => $content['content'], 'description' => $content['description'], 'uri' => PageUtil::cleanURL($content['uri'])], $additional), ['page_id' => $pageID], 1);
+            return $this->db->update($this->config->table_content, array_merge(['title' => $content['title'], 'content' => $content['content'], 'description' => $content['description'], 'uri' => PageUtil::cleanURL($content['uri'])], $additional), ['page_id' => $pageID], 1);
         }
         return false;
     }
@@ -95,7 +95,7 @@ class Page {
      */
     public function changePageStatus($pageID, $status = 0, $additional = []){
         if(is_numeric($pageID) && is_numeric($status)){
-            return $this->db->update($this->config->content_table, ['active' => $status], array_merge(['page_id' => intval($pageID)], $additional), 1);
+            return $this->db->update($this->config->table_content, ['active' => $status], array_merge(['page_id' => intval($pageID)], $additional), 1);
         }
         return false;
     }
@@ -108,7 +108,7 @@ class Page {
      */
     public function deletePage($pageID, $additional = []){
         if(is_numeric($pageID)){
-            return $this->db->delete($this->config->content_table, array_merge(['page_id' => intval($pageID)], $additional), 1);
+            return $this->db->delete($this->config->table_content, array_merge(['page_id' => intval($pageID)], $additional), 1);
         }
         return false;
     }
@@ -129,7 +129,7 @@ class Page {
                 $values[':'.$fieldVal] = $value;
             }
         }
-        return $this->db->query("SELECT `title`, `content`, `uri`, MATCH(`title`, `content`) AGAINST(:search) AS `score` FROM `{$this->config->content_table}` WHERE MATCH(`title`,`content`) AGAINST(:search IN BOOLEAN MODE){$sql} ORDER BY `score` DESC;", $values);
+        return $this->db->query("SELECT `title`, `content`, `uri`, MATCH(`title`, `content`) AGAINST(:search) AS `score` FROM `{$this->config->table_content}` WHERE MATCH(`title`,`content`) AGAINST(:search IN BOOLEAN MODE){$sql} ORDER BY `score` DESC;", $values);
     }
     
     /**
@@ -143,7 +143,7 @@ class Page {
     public function listPages($onlyActive = false, $start = 0, $limit = 50, $order = []){
         $where = [];
         if($onlyActive == true){$where['active'] = 1;}
-        return $this->db->selectAll($this->config->content_table, $where, '*', $order, [intval($start) => intval($limit)]);
+        return $this->db->selectAll($this->config->table_content, $where, '*', $order, [intval($start) => intval($limit)]);
     }
     
     /**
@@ -154,7 +154,7 @@ class Page {
     public function countPages($onlyActive = false){
         $where = [];
         if($onlyActive == true){$where['active'] = 1;}
-        return $this->db->count($this->config->content_table, $where);
+        return $this->db->count($this->config->table_content, $where);
     }
     
     /**
@@ -164,6 +164,6 @@ class Page {
      * @return int Will return the number of matching URLs (1 if exists and 0 if it doesn't)
      */
     protected function checkIfURLExists($uri, $additional = []){
-        return $this->db->count($this->config->content_table, array_merge(['uri' => PageUtil::cleanURL($uri)], $additional));
+        return $this->db->count($this->config->table_content, array_merge(['uri' => PageUtil::cleanURL($uri)], $additional));
     }
 }

@@ -100,7 +100,7 @@ class Link {
     public function listLinks($active = true, $additional = []) {
         $where = [];
         if($active === true){$where['active'] = 1;}
-        return $this->db->selectAll($this->config->links_table, array_merge($additional, $where));
+        return $this->db->selectAll($this->config->table_links, array_merge($additional, $where));
     }
     
     /**
@@ -110,7 +110,7 @@ class Link {
      */
     public function getLinkInfo($linkID, $additional = []) {
         if(is_numeric($linkID)){
-            return $this->db->select($this->config->links_table, array_merge($additional, ['id' => $linkID]));
+            return $this->db->select($this->config->table_links, array_merge($additional, ['id' => $linkID]));
         }
         return false;
     }
@@ -122,7 +122,7 @@ class Link {
      * @return boolean If successfully added will return true else returns false
      */
     public function addLink($linkInfo, $image = NULL, $additional = []) {
-        return $this->db->insert($this->config->links_table, array_merge($additional, $linkInfo, $this->imageUpload($image)));
+        return $this->db->insert($this->config->table_links, array_merge($additional, $linkInfo, $this->imageUpload($image)));
     }
     
     /**
@@ -134,7 +134,7 @@ class Link {
      */
     public function editLink($linkID, $linkInfo, $image = NULL, $additional = []) {
         if(is_numeric($linkID) && is_array($linkInfo)){
-            return $this->db->update($this->config->links_table, array_merge($linkInfo, $this->imageUpload($image)), array_merge($additional, ['id' => $linkID]));
+            return $this->db->update($this->config->table_links, array_merge($linkInfo, $this->imageUpload($image)), array_merge($additional, ['id' => $linkID]));
         }
         return false;
     }
@@ -146,7 +146,7 @@ class Link {
      */
     public function deleteLink($linkID, $additional = []) {
         if(is_numeric($linkID)){
-            return $this->db->delete($this->config->links_table, array_merge($additional, ['id' => $linkID]));
+            return $this->db->delete($this->config->table_links, array_merge($additional, ['id' => $linkID]));
         }
         return false;
     }
@@ -159,7 +159,7 @@ class Link {
      */
     public function changeLinkStatus($linkID, $status = 0, $additional = []) {
         if(is_numeric($linkID) && is_numeric($status)){
-            return $this->db->update($this->config->links_table, ['active' => $status], array_merge($additional, ['id' => $linkID]));
+            return $this->db->update($this->config->table_links, ['active' => $status], array_merge($additional, ['id' => $linkID]));
         }
         return false;
     }
@@ -174,7 +174,7 @@ class Link {
         if(file_exists($this->image->getRootFolder().($this->getStoreFolder() ? $info['image'] : '/'.str_replace('\\', '/', $this->image->getImageFolder()).$info['name']))){
             unlink($this->image->getRootFolder().($this->getStoreFolder() ? $info['image'] : '/'.str_replace('\\', '/', $this->image->getImageFolder()).$info['name']));
         }
-        return $this->db->update($this->config->links_table, ['image' => NULL, 'image_width' => 0, 'image_height' => 0], ['id' => $linkID]);
+        return $this->db->update($this->config->table_links, ['image' => NULL, 'image_width' => 0, 'image_height' => 0], ['id' => $linkID]);
     }
     
     /**
