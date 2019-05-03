@@ -97,10 +97,10 @@ class Link {
      * @param boolean $active If you only want to display active links set to true (default) else set to false
      * @return array|false If any link items exist they will be returned as an array else will return false if no links exist
      */
-    public function listLinks($active = true, $additional = []) {
+    public function listLinks($active = true, $additional = [], $sortBy = 'category') {
         $where = [];
         if($active === true){$where['active'] = 1;}
-        return $this->db->selectAll($this->config->table_links, array_merge($additional, $where));
+        return $this->db->selectAll($this->config->table_links, array_merge($additional, $where), '*', [$sortBy => 'ASC']);
     }
     
     /**
