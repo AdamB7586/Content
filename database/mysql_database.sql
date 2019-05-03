@@ -23,6 +23,16 @@ CREATE TABLE IF NOT EXISTS `pages` (
   UNIQUE KEY `unique_page` (`uri`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+CREATE TABLE IF NOT EXISTS `social_bookmarks` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` varchar(150) NOT NULL,
+  `location` varchar(255) NOT NULL,
+  `active` tinyint(1) UNSIGNED NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `location` (`location`),
+  KEY `active` (`active`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 INSERT INTO `config` (`setting`, `value`) VALUES
 ('table_links', 'links'),
 ('table_content', 'pages'),
