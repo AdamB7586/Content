@@ -2,7 +2,7 @@
 
 namespace Content\Utilities;
 
-use Sunra\PhpSimple\HtmlDomParser;
+use KubAT\PhpSimple\HtmlDomParser;
 
 class CleanContent {
     
