@@ -10,7 +10,7 @@ class LinkTest extends TestCase {
     protected $db;
     protected $links;
 
-    public function setUp() {
+    public function setUp() : void {
         $this->db = new Database($GLOBALS['hostname'], $GLOBALS['username'], $GLOBALS['password'], $GLOBALS['database']);
         if(!$this->db->isConnected()) {
             $this->markTestSkipped(
@@ -23,7 +23,7 @@ class LinkTest extends TestCase {
         $this->links = new Link($this->db, new Config($this->db), dirname(__FILE__).'/uploads/');
     }
     
-    public function tearDown() {
+    public function tearDown() : void {
         $this->db = null;
         $this->links = null;
     }

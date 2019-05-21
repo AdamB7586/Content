@@ -10,7 +10,7 @@ class PageTest extends TestCase {
     protected $db;
     protected $page;
 
-    public function setUp() {
+    public function setUp() : void {
         $this->db = new Database($GLOBALS['hostname'], $GLOBALS['username'], $GLOBALS['password'], $GLOBALS['database']);
         if(!$this->db->isConnected()) {
             $this->markTestSkipped(
@@ -23,7 +23,7 @@ class PageTest extends TestCase {
         $this->page = new Page($this->db, new Config($this->db));
     }
     
-    public function tearDown() {
+    public function tearDown() : void {
         $this->db = null;
         $this->page = null;
     }
