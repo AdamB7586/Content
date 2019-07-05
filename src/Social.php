@@ -71,7 +71,7 @@ class Social {
      * @return boolean Returns true if successfully added else will return false
      */
     public function addSocialBookmark($bookmarkInfo){
-        $bookmarkInfo['active'] = Validator::setZeroOnEmpty($bookmarkInfo['active']);
+        $bookmarkInfo['active'] = Validator::setZeroOnEmpty(isset($bookmarkInfo['active']) ? $bookmarkInfo['active'] : 0);
         return $this->db->insert($this->config->table_social_bookmarks, $bookmarkInfo);
     }
     
@@ -83,7 +83,7 @@ class Social {
      */
     public function updateSocialBookmark($bookmarkID, $bookmarkInfo = []){
         if(is_numeric($bookmarkID) && is_array($bookmarkInfo) && !empty($bookmarkInfo)){
-            $bookmarkInfo['active'] = Validator::setZeroOnEmpty($bookmarkInfo['active']);
+            $bookmarkInfo['active'] = Validator::setZeroOnEmpty(isset($bookmarkInfo['active']) ? $bookmarkInfo['active'] : 0);
             return $this->db->update($this->config->table_social_bookmarks, $bookmarkInfo, ['id' => $bookmarkID], 1);
         }
         return false;
