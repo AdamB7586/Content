@@ -29,14 +29,30 @@ class Link {
     }
     
     /**
+     * Sets the root folder location
+     * @param string $folder This should be the location of the file root
+     * @return $this
+     */
+    public function setRootFolder($folder){
+        $this->image->setRootFolder($folder);
+        return $this;
+    }
+    
+    /**
+     * Returns the root file folder location
+     * @return string
+     */
+    public function getRootFolder(){
+        return $this->image->getRootFolder();
+    }
+    
+    /**
      * Set the folder where the images will be uploaded to 
      * @param string $folder This should be the name of the folder that the main images will be uploaded to
      * @return $this
      */
     public function setImageFolder($folder) {
-        if(is_string($folder)){
-            $this->image->setImageFolder($folder);
-        }
+        $this->image->setImageFolder($folder);
         return $this;
     }
     
@@ -171,8 +187,8 @@ class Link {
      */
     public function deleteImage($linkID) {
         $info = $this->getLinkInfo($linkID);
-        if(file_exists($this->image->getRootFolder().($this->getStoreFolder() ? $info['image'] : '/'.str_replace('\\', '/', $this->image->getImageFolder()).$info['name']))){
-            unlink($this->image->getRootFolder().($this->getStoreFolder() ? $info['image'] : '/'.str_replace('\\', '/', $this->image->getImageFolder()).$info['name']));
+        if(file_exists($this->getRootFolder().($this->getStoreFolder() ? $info['image'] : '/'.str_replace('\\', '/', $this->getImageFolder()).$info['name']))){
+            unlink($this->getRootFolder().($this->getStoreFolder() ? $info['image'] : '/'.str_replace('\\', '/', $this->getImageFolder()).$info['name']));
         }
         return $this->db->update($this->config->table_links, ['image' => NULL, 'image_width' => 0, 'image_height' => 0], ['id' => $linkID]);
     }
@@ -189,16 +205,16 @@ class Link {
             if($this->getMaxImageWidth()){
                 $resize = new ImageResize($image['tmp_name']);
                 $resize->resizeToWidth($this->getMaxImageWidth());
-                $resize->save($this->getImageFolder().$image['name']);
+                $resize->save($this->getRootFolder().$this->getImageFolder().$image['name']);
                 $imageupload = true;
             }
             else{
                 $imageupload = $this->image->uploadImage($image);
             }
         }
-        if($imageupload === true && file_exists($this->image->getImageFolder().$image['name'])){
-            list($width, $height) = getimagesize($this->image->getImageFolder().$image['name']);
-            $imageInfo = ['image' => ($this->getStoreFolder() ? '/'.str_replace('\\', '/', $this->image->getImageFolder()).$image['name'] : $image['folder']), 'image_width' => $width, 'image_height' => $height];
+        if($imageupload === true && file_exists($this->getRootFolder().$this->getImageFolder().$image['name'])){
+            list($width, $height) = getimagesize($this->getRootFolder().$this->getImageFolder().$image['name']);
+            $imageInfo = ['image' => ($this->getStoreFolder() ? '/'.str_replace('\\', '/', $this->getImageFolder()).$image['name'] : $image['folder']), 'image_width' => $width, 'image_height' => $height];
         }
         return $imageInfo;
     }
