@@ -138,23 +138,25 @@ class Page {
      * @param int $start This should be the start point you want to start returning in the number of records
      * @param int $limit This should be the maximum number of records to display
      * @param array $order This should be how you wish to order the search results
+     * @param array $additional Any additional items to search on should be provided as an array
      * @return array|false If any results exist they will be returned as an array else will return false
      */
-    public function listPages($onlyActive = false, $start = 0, $limit = 50, $order = []){
+    public function listPages($onlyActive = false, $start = 0, $limit = 50, $order = [], $additional = []){
         $where = [];
         if($onlyActive == true){$where['active'] = 1;}
-        return $this->db->selectAll($this->config->table_content, $where, '*', $order, [intval($start) => intval($limit)]);
+        return $this->db->selectAll($this->config->table_content, array_merge($additional, $where), '*', $order, [intval($start) => intval($limit)]);
     }
     
     /**
      * Returns the total number of pages that exits in the database
      * @param boolean $onlyActive If you only want to count active pages set to true else leave as the default false
+     * @param array $additional Any additional items to search on should be provided as an array
      * @return int Returns the total number of pages
      */
-    public function countPages($onlyActive = false){
+    public function countPages($onlyActive = false, $additional = []){
         $where = [];
         if($onlyActive == true){$where['active'] = 1;}
-        return $this->db->count($this->config->table_content, $where);
+        return $this->db->count($this->config->table_content, array_merge($additional, $where));
     }
     
     /**
