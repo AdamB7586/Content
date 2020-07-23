@@ -40,10 +40,11 @@ class Page {
     /**
      * Returns the page content based on the page ID
      * @param int $pageID This should be the unique page ID
+     * @param array $additional Any additional fields to limit the search should be entered as an array
      * @return array|false If the page ID exists will return the page information as an array else will return false
      */
-    public function getPageByID($pageID){
-        return $this->buildPageInfo($this->db->select($this->config->table_content, ['page_id' => intval($pageID)]));
+    public function getPageByID($pageID, $additional = []){
+        return $this->buildPageInfo($this->db->select($this->config->table_content, array_merge($additional, ['page_id' => intval($pageID)])));
     }
     
     /**
