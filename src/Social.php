@@ -8,6 +8,7 @@ use Content\Utilities\Validator;
 
 class Social {
     protected $db;
+    protected $config;
     
     /**
      * Constructor

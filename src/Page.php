@@ -33,7 +33,7 @@ class Page {
     public function getPage($pageURI, $onlyActive = true, $additional = []){
         $where = [];
         $where['uri'] = $pageURI;
-        if($onlyActive == true){$where['active'] = 1;}
+        if($onlyActive === true){$where['active'] = 1;}
         return $this->buildPageInfo($this->db->select($this->config->table_content, array_merge($where, $additional)));
     }
     
@@ -144,7 +144,7 @@ class Page {
      */
     public function listPages($onlyActive = false, $start = 0, $limit = 50, $order = [], $additional = []){
         $where = [];
-        if($onlyActive == true){$where['active'] = 1;}
+        if($onlyActive === true){$where['active'] = 1;}
         return $this->db->selectAll($this->config->table_content, array_merge($additional, $where), '*', $order, [intval($start) => intval($limit)]);
     }
     
@@ -156,7 +156,7 @@ class Page {
      */
     public function countPages($onlyActive = false, $additional = []){
         $where = [];
-        if($onlyActive == true){$where['active'] = 1;}
+        if($onlyActive === true){$where['active'] = 1;}
         return $this->db->count($this->config->table_content, array_merge($additional, $where));
     }
     
