@@ -13,6 +13,15 @@ build:
                 coverage:
                     file: 'coverage.xml'
                     format: 'clover'
+                    
+    nodes:
+        analysis:
+            dependencies:
+                before:
+                    - sudo apt-get install php-gb
+            tests:
+                override:
+                    - php-scrutinizer-run
 
 before_commands:
     - "composer install --prefer-source"
