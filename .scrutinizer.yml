@@ -18,7 +18,7 @@ build:
         analysis:
             dependencies:
                 before:
-                    - sudo apt-get install php-gb
+                    - sudo apt-get install php-gd
             tests:
                 override:
                     - php-scrutinizer-run
