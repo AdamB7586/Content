@@ -7,17 +7,19 @@ use Configuration\Config;
 use Content\Utilities\PageUtil;
 use KubAT\PhpSimple\HtmlDomParser;
 
-class Page {
+class Page
+{
     protected $db;
     protected $config;
     protected $htmlParser;
 
     /**
-     * 
+     *
      * @param Database $db
      * @param Config $config
      */
-    public function __construct(Database $db, Config $config) {
+    public function __construct(Database $db, Config $config)
+    {
         $this->db = $db;
         $this->config = $config;
         $this->htmlParser = new HtmlDomParser();
@@ -30,10 +32,13 @@ class Page {
      * @param array $additional Any additional fields to limit the search should be entered as an array
      * @return array|false If the content exists will return an array containing the information else will return false
      */
-    public function getPage($pageURI, $onlyActive = true, $additional = []){
+    public function getPage($pageURI, $onlyActive = true, $additional = [])
+    {
         $where = [];
         $where['uri'] = $pageURI;
-        if($onlyActive === true){$where['active'] = 1;}
+        if ($onlyActive === true) {
+            $where['active'] = 1;
+        }
         return $this->buildPageInfo($this->db->select($this->config->table_content, array_merge($where, $additional)));
     }
     
@@ -43,18 +48,20 @@ class Page {
      * @param array $additional Any additional fields to limit the search should be entered as an array
      * @return array|false If the page ID exists will return the page information as an array else will return false
      */
-    public function getPageByID($pageID, $additional = []){
+    public function getPageByID($pageID, $additional = [])
+    {
         return $this->buildPageInfo($this->db->select($this->config->table_content, array_merge($additional, ['page_id' => intval($pageID)])));
     }
     
     /**
      * Returns the formatted page information
      * @param array|false $page This should be the page information array if it exists
-     * @return array|false The page information will be returned if it exists else false will be returned 
+     * @return array|false The page information will be returned if it exists else false will be returned
      */
-    protected function buildPageInfo($page){
-        if(is_array($page)) {
-            if($page['additional'] !== NULL){
+    protected function buildPageInfo($page)
+    {
+        if (is_array($page)) {
+            if ($page['additional'] !== null) {
                 $page['additional'] = unserialize($page['additional']);
             }
             return $page;
@@ -68,8 +75,9 @@ class Page {
      * @param array $additional Any additional items to add should be entered as an array
      * @return boolean Returns true on success and false on failure
      */
-    public function addPage($content, $additional = []){
-        if(is_array($content) && $this->checkIfURLExists($content['uri'], $additional) === 0){
+    public function addPage($content, $additional = [])
+    {
+        if (is_array($content) && $this->checkIfURLExists($content['uri'], $additional) === 0) {
             return $this->db->insert($this->config->table_content, array_merge(['title' => $content['title'], 'content' => $content['content'], 'description' => $content['description'], 'uri' => PageUtil::cleanURL($content['uri'])], $additional));
         }
     }
@@ -81,8 +89,9 @@ class Page {
      * @param array $additional Any additional items to limit the update should be entered as an array
      * @return boolean Returns true on success and false on failure
      */
-    public function updatePage($pageID, $content = [], $additional = []){
-        if(is_numeric($pageID) && is_array($content)){
+    public function updatePage($pageID, $content = [], $additional = [])
+    {
+        if (is_numeric($pageID) && is_array($content)) {
             return $this->db->update($this->config->table_content, array_merge(['title' => $content['title'], 'content' => $content['content'], 'description' => $content['description'], 'uri' => PageUtil::cleanURL($content['uri'])], $additional), ['page_id' => $pageID], 1);
         }
         return false;
@@ -94,8 +103,9 @@ class Page {
      * @param array $additional Any additional items to limit the update should be entered as an array
      * @return boolean Returns true on success and false on failure
      */
-    public function changePageStatus($pageID, $status = 0, $additional = []){
-        if(is_numeric($pageID) && is_numeric($status)){
+    public function changePageStatus($pageID, $status = 0, $additional = [])
+    {
+        if (is_numeric($pageID) && is_numeric($status)) {
             return $this->db->update($this->config->table_content, ['active' => $status], array_merge(['page_id' => intval($pageID)], $additional), 1);
         }
         return false;
@@ -107,8 +117,9 @@ class Page {
      * @param array $additional Any additional items to limit the delete should be entered as an array
      * @return boolean Returns true on success and false on failure
      */
-    public function deletePage($pageID, $additional = []){
-        if(is_numeric($pageID)){
+    public function deletePage($pageID, $additional = [])
+    {
+        if (is_numeric($pageID)) {
             return $this->db->delete($this->config->table_content, array_merge(['page_id' => intval($pageID)], $additional), 1);
         }
         return false;
@@ -120,11 +131,12 @@ class Page {
      * @param array $additional Any additional items to search on should be provided as an array
      * @return array|false If any information exists they will be returned as an array else will return false
      */
-    public function searchPages($search, $additional = []){
+    public function searchPages($search, $additional = [])
+    {
         $sql = '';
         $values = [':search' => $search];
-        if(!empty($additional)){
-            foreach($additional as $field => $value) {
+        if (!empty($additional)) {
+            foreach ($additional as $field => $value) {
                 $fieldVal = SafeString::makeSafe($field);
                 $sql.= " AND `{$fieldVal}` = :{$fieldVal}";
                 $values[':'.$fieldVal] = $value;
@@ -142,9 +154,12 @@ class Page {
      * @param array $additional Any additional items to search on should be provided as an array
      * @return array|false If any results exist they will be returned as an array else will return false
      */
-    public function listPages($onlyActive = false, $start = 0, $limit = 50, $order = [], $additional = []){
+    public function listPages($onlyActive = false, $start = 0, $limit = 50, $order = [], $additional = [])
+    {
         $where = [];
-        if($onlyActive === true){$where['active'] = 1;}
+        if ($onlyActive === true) {
+            $where['active'] = 1;
+        }
         return $this->db->selectAll($this->config->table_content, array_merge($additional, $where), '*', $order, [intval($start) => intval($limit)]);
     }
     
@@ -154,9 +169,12 @@ class Page {
      * @param array $additional Any additional items to search on should be provided as an array
      * @return int Returns the total number of pages
      */
-    public function countPages($onlyActive = false, $additional = []){
+    public function countPages($onlyActive = false, $additional = [])
+    {
         $where = [];
-        if($onlyActive === true){$where['active'] = 1;}
+        if ($onlyActive === true) {
+            $where['active'] = 1;
+        }
         return $this->db->count($this->config->table_content, array_merge($additional, $where));
     }
     
@@ -166,7 +184,8 @@ class Page {
      * @param array $additional Any additional items to search on should be provided as an array
      * @return int Will return the number of matching URLs (1 if exists and 0 if it doesn't)
      */
-    protected function checkIfURLExists($uri, $additional = []){
+    protected function checkIfURLExists($uri, $additional = [])
+    {
         return $this->db->count($this->config->table_content, array_merge(['uri' => PageUtil::cleanURL($uri)], $additional));
     }
 }
