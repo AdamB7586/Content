@@ -1,6 +1,6 @@
 build:
     environment:
-        php: '7.4.0'
+        php: 7.4
             
     project_setup:
         before:
@@ -18,7 +18,7 @@ build:
         analysis:
             dependencies:
                 before:
-                    - sudo apt-get install php-gd
+                    - sudo apt-get install php7.4-gd
             tests:
                 override:
                     - php-scrutinizer-run
