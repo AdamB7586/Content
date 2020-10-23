@@ -7,7 +7,8 @@
         "adamb/image-upload": "^1.0",
         "adamb/config": "^1.0",
         "gumlet/php-image-resize": "^1.9",
-        "kub-at/php-simple-html-dom-parser": "^1.8"
+        "kub-at/php-simple-html-dom-parser": "^1.8",
+        "ext-gd": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "*"
