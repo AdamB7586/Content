@@ -6,13 +6,15 @@ use DBAL\Database;
 use Configuration\Config;
 use Content\Page;
 
-class PageTest extends TestCase {
+class PageTest extends TestCase
+{
     protected $db;
     protected $page;
 
-    public function setUp() : void {
+    public function setUp() : void
+    {
         $this->db = new Database($GLOBALS['hostname'], $GLOBALS['username'], $GLOBALS['password'], $GLOBALS['database']);
-        if(!$this->db->isConnected()) {
+        if (!$this->db->isConnected()) {
             $this->markTestSkipped(
                 'No local database connection is available'
             );
@@ -23,7 +25,8 @@ class PageTest extends TestCase {
         $this->page = new Page($this->db, new Config($this->db));
     }
     
-    public function tearDown() : void {
+    public function tearDown() : void
+    {
         $this->db = null;
         $this->page = null;
     }
@@ -33,7 +36,8 @@ class PageTest extends TestCase {
      * @covers Content\Page::
      * @covers Content\Page::
      */
-    public function testAddPage() {
+    public function testAddPage()
+    {
         $this->markTestIncomplete();
     }
     
@@ -42,7 +46,8 @@ class PageTest extends TestCase {
      * @covers Content\Page::
      * @covers Content\Page::
      */
-    public function testEditPage() {
+    public function testEditPage()
+    {
         $this->markTestIncomplete();
     }
     
@@ -51,7 +56,8 @@ class PageTest extends TestCase {
      * @covers Content\Page::
      * @covers Content\Page::
      */
-    public function testGetPage(){
+    public function testGetPage()
+    {
         $this->markTestIncomplete();
     }
     
@@ -60,7 +66,8 @@ class PageTest extends TestCase {
      * @covers Content\Page::
      * @covers Content\Page::
      */
-    public function testDisablePage() {
+    public function testDisablePage()
+    {
         $this->markTestIncomplete();
     }
     
@@ -69,7 +76,8 @@ class PageTest extends TestCase {
      * @covers Content\Page::
      * @covers Content\Page::
      */
-    public function testDeletePage() {
+    public function testDeletePage()
+    {
         $this->markTestIncomplete();
     }
     
@@ -78,7 +86,8 @@ class PageTest extends TestCase {
      * @covers Content\Page::
      * @covers Content\Page::
      */
-    public function testSearchPages(){
+    public function testSearchPages()
+    {
         $this->markTestIncomplete();
     }
 }
