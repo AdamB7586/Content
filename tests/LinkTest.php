@@ -98,8 +98,8 @@ class LinkTest extends TestCase
         $this->links->setImageFolder(45645);
         $this->assertNotEquals(45645, $this->links->getImageFolder());
         $this->assertEquals($origFolder, $this->links->getImageFolder());
-        $this->links->setImageFolder('/images/links/');
-        $this->assertEquals('/images/links/', $this->links->getImageFolder());
+        $this->assertEquals($this->links, $this->links->setImageFolder('/images/links/'));
+        $this->assertEquals('images/links'.DIRECTORY_SEPARATOR, $this->links->getImageFolder());
         $this->assertNotEquals($this->links->getImageFolder(), $origFolder);
     }
 }
