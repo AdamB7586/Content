@@ -242,7 +242,7 @@ class Link
         $imageInfo = [];
         $imageupload = false;
         if (!empty($image) && $image['error'] == UPLOAD_ERR_OK) {
-            if ($this->getMaxImageWidth()) {
+            if ($this->getMaxImageWidth() !== false) {
                 $resize = new ImageResize($image['tmp_name']);
                 $resize->resizeToWidth($this->getMaxImageWidth());
                 $resize->save($this->getRootFolder().$this->getImageFolder().$image['name']);
