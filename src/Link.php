@@ -9,17 +9,38 @@ use Gumlet\ImageResize;
 
 class Link
 {
+    /**
+     * An instance of the database object
+     * @var object
+     */
     protected $db;
+    /**
+     * An instance of the configuration object
+     * @var object
+     */
     protected $config;
+    /**
+     * An instance of the ImageUpload object
+     * @var object 
+     */
     protected $image;
     
+    /**
+     * The maximum image width to allow
+     * @var int|false 
+     */
     public $maxImageWidth = false;
+    
+    /**
+     * If to store folder location in the database or not
+     * @var boolean
+     */
     public $storeFolder = false;
 
     /**
      * Constructor
-     * @param DBAL\Database $db
-     * @param Configuration\Config $config
+     * @param \DBAL\Database $db
+     * @param \Configuration\Config $config
      * @param string $imageFolder
      */
     public function __construct(Database $db, Config $config, $imageFolder = '/images/links')
@@ -78,7 +99,6 @@ class Link
     public function setMaxImageWidth($width)
     {
         if (is_numeric($width) || $width === false) {
-            $this->image->setMinWidth($width);
             $this->maxImageWidth = $width;
         }
         return $this;

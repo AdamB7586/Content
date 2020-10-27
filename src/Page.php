@@ -3,6 +3,7 @@
 namespace Content;
 
 use DBAL\Database;
+use DBAL\Modifiers\SafeString;
 use Configuration\Config;
 use Content\Utilities\PageUtil;
 use KubAT\PhpSimple\HtmlDomParser;
@@ -129,7 +130,7 @@ class Page
      * Search page content
      * @param string $search This should be the text you wish to search the content on
      * @param array $additional Any additional items to search on should be provided as an array
-     * @return array|false If any information exists they will be returned as an array else will return false
+     * @return array|boolean If any information exists they will be returned as an array else will return false
      */
     public function searchPages($search, $additional = [])
     {

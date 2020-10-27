@@ -1,0 +1,6 @@
+/nbproject/
+/vendor/
+*.lock
+*.cache
+*.bak
+clover.xml

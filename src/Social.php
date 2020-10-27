@@ -55,19 +55,16 @@ class Social
      */
     public function getBookmarkInfo($bookmarkID, $active = false, $orig = false, $domain = '', $title = '')
     {
-        if (is_numeric($bookmarkID)) {
-            $where = [];
-            $where['id'] = $bookmarkID;
-            if ($active === true) {
-                $where['active'] = 1;
-            }
-            $bookmarkInfo = $this->db->select($this->config->table_social_bookmarks, $where);
-            if (is_array($bookmarkInfo) && $orig === false) {
-                $bookmarkInfo['location'] = $this->buildLink($bookmarkInfo['location'], $domain, $title);
-            }
-            return $bookmarkInfo;
+        $where = [];
+        $where['id'] = $bookmarkID;
+        if ($active === true) {
+            $where['active'] = 1;
         }
-        return false;
+        $bookmarkInfo = $this->db->select($this->config->table_social_bookmarks, $where);
+        if (is_array($bookmarkInfo) && $orig === false) {
+            $bookmarkInfo['location'] = $this->buildLink($bookmarkInfo['location'], $domain, $title);
+        }
+        return $bookmarkInfo;
     }
     
     /**
