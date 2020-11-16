@@ -79,7 +79,7 @@ class Page
     public function addPage($content, $additional = [])
     {
         if (is_array($content) && $this->checkIfURLExists($content['uri'], $additional) === 0) {
-            return $this->db->insert($this->config->table_content, array_merge(['title' => $content['title'], 'content' => $content['content'], 'description' => $content['description'], 'uri' => PageUtil::cleanURL($content['uri'])], $additional));
+            return $this->db->insert($this->config->table_content, array_merge(['title' => htmlentities($content['title']), 'content' => $content['content'], 'description' => htmlentities($content['description']), 'uri' => PageUtil::cleanURL($content['uri'])], $additional));
         }
     }
     
@@ -93,7 +93,7 @@ class Page
     public function updatePage($pageID, $content = [], $additional = [])
     {
         if (is_numeric($pageID) && is_array($content)) {
-            return $this->db->update($this->config->table_content, array_merge(['title' => $content['title'], 'content' => $content['content'], 'description' => $content['description'], 'uri' => PageUtil::cleanURL($content['uri'])], $additional), ['page_id' => $pageID], 1);
+            return $this->db->update($this->config->table_content, array_merge(['title' => htmlentities($content['title']), 'content' => $content['content'], 'description' => htmlentities($content['description']), 'uri' => PageUtil::cleanURL($content['uri'])], $additional), ['page_id' => $pageID], 1);
         }
         return false;
     }
