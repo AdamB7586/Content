@@ -81,6 +81,7 @@ class Page
         if (is_array($content) && $this->checkIfURLExists($content['uri'], $additional) === 0) {
             return $this->db->insert($this->config->table_content, array_merge(['title' => htmlentities($content['title']), 'content' => $content['content'], 'description' => htmlentities($content['description']), 'uri' => PageUtil::cleanURL($content['uri'])], $additional));
         }
+        return false;
     }
     
     /**
